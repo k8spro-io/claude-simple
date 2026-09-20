@@ -1,15 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-
-  "//": "Recommended project settings installed by /simple:setup. Merged key by key — anything you already have is kept. Read plugins/simple/docs/permissions.md before changing the lists: deny ALWAYS beats allow, and a Read() deny also blocks Edit and Write on the same path.",
-
+  "//": "Recommended project settings installed by /simple:setup. Merged key by key \u2014 anything you already have is kept. Read plugins/simple/docs/permissions.md before changing the lists: deny ALWAYS beats allow, and a Read() deny also blocks Edit and Write on the same path.",
   "env": {
     "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS": "4"
   },
-
   "skillListingMaxDescChars": 600,
   "autoCompactWindow": 300000,
-
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
@@ -18,30 +14,41 @@
       }
     }
   },
-
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
   },
-
   "claudeMdExcludes": [
     "**/node_modules/**",
     "**/vendor/**",
     "**/.claude/worktrees/**"
   ],
-
   "permissions": {
     "deny": [
       "Bash(rm -rf /)",
-      "Bash(rm -rf /*)",
       "Bash(rm -fr /)",
-      "Bash(rm -fr /*)",
+      "Bash(rm -rf /bin*)",
+      "Bash(rm -rf /boot*)",
+      "Bash(rm -rf /dev*)",
+      "Bash(rm -rf /etc*)",
+      "Bash(rm -rf /lib*)",
+      "Bash(rm -rf /lib64*)",
+      "Bash(rm -rf /opt*)",
+      "Bash(rm -rf /proc*)",
+      "Bash(rm -rf /root*)",
+      "Bash(rm -rf /run*)",
+      "Bash(rm -rf /sbin*)",
+      "Bash(rm -rf /srv*)",
+      "Bash(rm -rf /sys*)",
+      "Bash(rm -rf /usr*)",
+      "Bash(rm -rf /var*)",
+      "Bash(rm -rf /home)",
+      "Bash(rm -rf /home/)",
       "Bash(rm -rf ~)",
       "Bash(rm -rf ~/*)",
       "Bash(rm -rf $HOME*)",
       "Bash(rm -rf ..*)",
       "Bash(sudo rm*)",
-
       "Bash(git push --force*)",
       "Bash(git push -f *)",
       "Bash(git push --mirror*)",
@@ -55,11 +62,9 @@
       "Bash(git stash clear*)",
       "Bash(git filter-branch*)",
       "Bash(git filter-repo*)",
-
       "Bash(docker volume rm*)",
       "Bash(docker volume prune*)",
       "Bash(docker system prune*)",
-
       "Bash(kubectl delete pvc*)",
       "Bash(kubectl delete pv *)",
       "Bash(kubectl delete namespace*)",
@@ -67,13 +72,11 @@
       "Bash(kubectl delete secret*)",
       "Bash(terraform destroy*)",
       "Bash(pulumi destroy*)",
-
       "Bash(npm publish*)",
       "Bash(bun publish*)",
       "Bash(cargo publish*)",
       "Bash(gh repo delete*)",
       "Bash(gh release delete*)",
-
       "Read(**/node_modules/**)",
       "Read(**/vendor/**)",
       "Read(**/.git/**)",
@@ -114,7 +117,6 @@
       "Bash(gofmt:*)",
       "Bash(goimports:*)",
       "Bash(golangci-lint run:*)",
-
       "Bash(bun run typecheck)",
       "Bash(bun run lint)",
       "Bash(bun run test)",
@@ -125,7 +127,6 @@
       "Bash(task test:*)",
       "Bash(task --list*)",
       "Bash(make test*)",
-
       "Bash(rg:*)",
       "Bash(grep:*)",
       "Bash(awk:*)",
@@ -148,7 +149,6 @@
       "Bash(sort:*)",
       "Bash(uniq:*)",
       "Bash(diff:*)",
-
       "Bash(git status:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",
@@ -160,7 +160,6 @@
       "Bash(git rev-parse:*)",
       "Bash(git merge-base:*)",
       "Bash(git worktree list:*)",
-
       "Bash(gh issue list:*)",
       "Bash(gh issue view:*)",
       "Bash(gh pr list:*)",
@@ -171,7 +170,6 @@
       "Bash(gh run view:*)",
       "Bash(gh workflow list:*)",
       "Bash(gh workflow view:*)",
-
       "Bash(docker ps:*)",
       "Bash(docker compose ps:*)",
       "Bash(docker compose logs:*)",

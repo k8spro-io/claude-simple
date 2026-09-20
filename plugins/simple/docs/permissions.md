@@ -24,12 +24,24 @@ you from**.
 
 ### Filesystem
 
-`rm -rf /`, `/*`, `~`, `~/*`, `$HOME*`, `..*`, and any `sudo rm`.
+`rm -rf /` and `rm -fr /` exactly; the system roots (`/bin*`, `/boot*`, `/dev*`, `/etc*`, `/lib*`, `/lib64*`,
+`/opt*`, `/proc*`, `/root*`, `/run*`, `/sbin*`, `/srv*`, `/sys*`, `/usr*`, `/var*`); `/home` and `/home/` exactly;
+`~`, `~/*`, `$HOME*`, `..*`; and any `sudo rm`.
 
 **Deliberately NOT a blanket `rm -rf *`.** A blanket rule blocks `rm -rf node_modules`, `rm -rf dist`, `rm -rf .nuxt` —
 things developers run several times a week — and because deny beats allow there is no way to permit them back. In
 practice the whole file gets deleted by the first person who hits that wall, and they lose every other guard with it.
-So the denied forms are the ones that are *never* legitimate: absolute root, the home directory, and walking upward.
+So the denied forms are the ones that are *never* legitimate.
+
+**And not `rm -rf /*` either — that was this file's own bug, fixed after it bit.** The first version of this list
+replaced the blanket rule with `Bash(rm -rf /*)`, which looks narrow and is not: patterns match the *start* of the
+command and `*` swallows the rest, so it denies **every** `rm -rf` with an absolute path — `rm -rf /tmp/scratch` and
+`rm -rf ~/.cache/something` included. It reproduced the exact failure it was written to fix. Hence the explicit list
+of system roots above.
+
+**A limit the pattern language cannot express:** `rm -rf ~/*` stays denied, so a path under your home has to be
+written in absolute form (`/home/you/...`). Telling "the whole home" apart from "something inside the home" would
+need a regex, and these patterns are globs.
 
 If you work with `bypassPermissions` on and want the stricter version, add `Bash(rm -rf *)` and `Bash(rm -fr *)`
 yourself — just know what you are trading.
