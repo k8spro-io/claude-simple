@@ -1,0 +1,31 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-simple",
+  "description": "A lean Claude Code setup for Go + Nuxt/TypeScript + TiDB teams, distilled from a production monorepo and from what survived cost-per-fix measurement.",
+  "owner": {
+    "name": "k8spro"
+  },
+  "plugins": [
+    {
+      "name": "simple",
+      "description": "Agents, skills, hooks, a statusline and a one-command project setup for working on Go + Nuxt/TypeScript + TiDB codebases with fewer tokens: grep-first navigation, lean workflow workers, a guard against reading huge files, a delivery gate, and the method for measuring a plugin before adopting it.",
+      "author": {
+        "name": "k8spro"
+      },
+      "category": "productivity",
+      "keywords": [
+        "go",
+        "golang",
+        "nuxt",
+        "typescript",
+        "tidb",
+        "tokens",
+        "cost",
+        "agents",
+        "workflow",
+        "statusline"
+      ],
+      "source": "./plugins/simple"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "simple",
+  "version": "0.1.0",
+  "description": "A lean Claude Code setup for Go + Nuxt/TypeScript + TiDB: grep-first navigation, workflow workers without dead context, a hook that blocks whole-file reads of huge files, a statusline with live cost and weekly usage, and the method for measuring a plugin before adopting it.",
+  "author": {
+    "name": "k8spro"
+  },
+  "repository": "https://github.com/k8spro-io/claude-simple",
+  "license": "MIT",
+  "keywords": [
+    "go",
+    "golang",
+    "nuxt",
+    "typescript",
+    "tidb",
+    "tokens",
+    "cost",
+    "agents",
+    "workflow",
+    "statusline"
+  ]
+}
