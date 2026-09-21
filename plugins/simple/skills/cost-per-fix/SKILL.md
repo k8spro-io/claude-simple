@@ -60,7 +60,9 @@ PDFs — irrelevant to code work.
 
 - **Experimenting is free.** Try anything, in an isolated worktree.
 - **Adopting requires a measurement** of the whole session, n ≥ 2, with cost per correct fix.
-- **Orchestration is not the default.** A bug contained in one package is a plain session. Reach for a Workflow only
-  when there is real parallelism — disjoint lanes that genuinely do not need to read each other's output.
+- **Orchestration is the default, and here is what it costs.** The main session orchestrates and delegates execution
+  to a subagent, a task or a Workflow — a Workflow when there is real parallelism, disjoint lanes that genuinely do
+  not need to read each other's output. The table above is the price of that default: read it before picking a
+  worker's model and shape, not to decide whether to delegate at all.
 - When a subagent *is* warranted: cap its answer at ~3,000 characters, give it the file paths you already mapped, and
   never let it re-derive understanding you already have. The subagent pays the whole context prefix again.

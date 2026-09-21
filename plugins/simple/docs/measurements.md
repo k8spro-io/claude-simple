@@ -1,5 +1,8 @@
 # What was measured, and how
 
+The setup's owner changed the default orchestration policy on 2026-09-21, to delegate by default. The numbers below
+are unchanged — they remain the known cost of that choice, not an argument against it.
+
 Every cost claim in this plugin comes from a controlled run, not from intuition. This document gives the findings and
 the protocol, so you can reproduce them on your own repository — which you should, because the magnitudes depend on
 your codebase.

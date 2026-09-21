@@ -54,9 +54,15 @@ Rules in `.claude/rules/` load themselves when a tool touches a matching path �
 
 ## Orchestration
 
-- **A subagent is not the default.** A bug contained in one package is a plain session. Measured on a real
-  benchmark: orchestrating the same work cost 92% more for the same result. Reach for orchestration only when
-  lanes are genuinely disjoint. See skill `cost-per-fix`.
+- **Delegating is the default.** The main session orchestrates: understand the request, map `file:line`, decide,
+  dispatch. Execution goes to a subagent, a task or a Workflow — a Workflow when there is real parallelism (disjoint
+  lanes), a subagent for everything else.
+- **Model by layer.** Map / read / review → **haiku** worker. Implement → **sonnet** worker. The big model only
+  orchestrates. A lean worker (`omitClaudeMd: true`) is still the right shape for one: it cuts the fixed context per
+  request from 18.1k tokens to 4.8k. See skill `cost-per-fix` for what this costs and what it buys.
+- **Two exceptions, and only these two.** The release gate runs in the orchestrating session — the invariant above
+  requires output that was actually seen, and a worker's report is not seen output. Harness config (`settings.json`,
+  hooks, the plugin itself) also stays in the orchestrating session, because a subagent refuses to edit it.
 - **At most 4-6 subagents in parallel.** Past that the provider starts returning 429 and the work is lost.
 - **A subagent's answer is capped at ~3,000 characters:** verdict, the findings that change a decision, and the
   path to the long report.

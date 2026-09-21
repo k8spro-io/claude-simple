@@ -56,7 +56,7 @@ rg -n --glob '*.ts' 'useApi\(' app/
 | `Read` a 2,000-line file to change 3 lines | `rg -n` finds the line → `sed -n` / `Read` with `offset` |
 | Re-read a file after editing "to check" | `Edit` fails if it did not apply — the harness tracks file state |
 | `grep -r` across the repo with no filter | `rg -n --type go` / `--glob '*.vue'`, scoped to a directory |
-| Delegate a single-file task to a subagent | The subagent pays the whole prefix again — it costs more, not less |
+| Map or read code yourself in the orchestrating session | Dispatch a lean, read-only haiku worker (`omitClaudeMd: true`) — mapping and reading is what it's for, and it's cheaper than the orchestrator's own model doing it |
 
 ## Type checking (the build, not just the editor)
 
