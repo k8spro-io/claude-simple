@@ -1,7 +1,7 @@
 ---
 name: wf-reader
 description: READ-ONLY worker — maps code, reads docs and reviews a diff. Writes nothing. Use as the agentType for the mapping and reviewing phases of a Workflow, or as a plain investigation subagent.
-model: sonnet
+model: haiku
 tools: ["Read", "Grep", "Glob"]
 omitClaudeMd: true
 ---
