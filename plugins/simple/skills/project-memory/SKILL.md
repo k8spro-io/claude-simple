@@ -20,7 +20,7 @@ next person will look.**
 
 | Save | Do not save |
 |---|---|
-| A constraint that is not derivable from the code ("the tutor app must keep working with the old column for one deploy") | What the code already says — structure, signatures, call sites |
+| A constraint that is not derivable from the code ("the mobile client still sends the v1 payload, so the field cannot be dropped until the next store release") | What the code already says — structure, signatures, call sites |
 | A decision's *why*, when the decision itself is an ADR (link it) | The decision text itself — that is an ADR, not a memory |
 | A correction the team gave you, with the reason | Anything that only matters inside the current conversation |
 | Where an external thing lives (dashboard, ticket board, runbook) | Secrets, tokens, customer data, anything from a `.env` |
@@ -28,13 +28,24 @@ next person will look.**
 
 A relative date is worthless six months later: write the absolute one.
 
+## The templates
+
+`/simple:setup --memory` seeds the vault with a template per type, in `.claude/memory/templates/`:
+`memory-project.md`, `memory-feedback.md`, `memory-user.md`, `memory-reference.md`, plus
+`example-filled-note.md` — a complete note, kept in that folder so it is never mistaken for a real
+memory.
+
+Copy one by hand, or wire Obsidian to them: **Settings → Core plugins → Templates → Template folder
+location: `templates`**, then *Insert template* in a new note. `{{title}}` and `{{date:YYYY-MM-DD}}`
+are filled in on insert, so the `name:` always matches the file name and the date is never relative.
+
 ## The shape of a note
 
 `.claude/memory/<short-kebab-case-slug>.md`:
 
 ```markdown
 ---
-name: tutor-app-tolerates-old-schema
+name: mobile-client-still-sends-v1
 description: One line, so recall can decide whether this note is relevant
 metadata:
   type: project        # user | feedback | project | reference
@@ -45,13 +56,13 @@ The fact, in a sentence or two, with the absolute date if it has one.
 **Why:** what it prevents or explains.
 **How to apply:** what to do differently because of it.
 
-Related: [[three-deploy-column-change]], [[adr-0042-tenant-scoping]]
+Related: [[three-deploy-column-change]], [[adr-0042-api-versioning]]
 ```
 
 Then add exactly one line to `MEMORY.md`:
 
 ```markdown
-- [Tutor app tolerates the old schema](tutor-app-tolerates-old-schema.md) — one deploy of overlap
+- [Mobile client still sends v1](mobile-client-still-sends-v1.md) — the field stays until the next store release
 ```
 
 `MEMORY.md` is an index, never a place to put content. A fact written only in the index is a fact

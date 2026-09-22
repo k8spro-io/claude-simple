@@ -86,8 +86,10 @@ Why those models, and how to change them: [`docs/model-policy.md`](plugins/simpl
   `infra-ci.md`… (Claude Code only reads rule files that sit directly in that folder — a subdirectory is never
   loaded.) The full catalogue is in [`docs/rules-catalog.md`](plugins/simple/docs/rules-catalog.md).
 - `.claude/memory/` — the project's memory as an **Obsidian vault**: one note per fact, `MEMORY.md` as the index,
-  `[[links]]` between notes. Claude Code's own auto-memory folder for the project is symlinked to it, so what gets
-  saved lands in the repository instead of a per-machine cache. Format and discipline: skill `project-memory`.
+  `[[links]]` between notes, and `templates/` with a note template per memory type (`project`, `feedback`, `user`,
+  `reference`) plus a filled example — ready for Obsidian's Templates plugin, `{{title}}` and `{{date}}` included.
+  Claude Code's own auto-memory folder for the project is symlinked to it, so what gets saved lands in the
+  repository instead of a per-machine cache. Format and discipline: skill `project-memory`.
 - **LSP enabled** for the stacks that have one: `gopls-lsp` and `typescript-lsp` from the official marketplace, plus
   the language servers they drive (`gopls`, and `tsserver` from TypeScript **6.x** — 7.x ships no tsserver and the
   LSP fails).

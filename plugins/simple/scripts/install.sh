@@ -172,8 +172,7 @@ if [ "$DO_MEMORY" = 1 ]; then
 import os, re, shutil, sys
 project, plugin_root, dry = sys.argv[1], sys.argv[2], sys.argv[3] == "1"
 vault = os.path.join(project, ".claude", "memory")
-index = os.path.join(vault, "MEMORY.md")
-seed = os.path.join(plugin_root, "templates", "MEMORY.md")
+scaffold = os.path.join(plugin_root, "templates", "memory")
 
 # Claude Code names a project's state folder after its absolute path, with every character that is
 # not a letter or a digit replaced by a dash: /home/x/repo -> -home-x-repo
@@ -187,10 +186,25 @@ if not os.path.isdir(vault):
 else:
     print("  memory: %s already exists" % os.path.relpath(vault, project))
 
-if not os.path.exists(index):
-    print("  memory: seeding MEMORY.md (the vault's index note)")
-    if not dry:
-        shutil.copyfile(seed, index)
+# MEMORY.md (the index) plus templates/ — one note template per memory type, and one filled
+# example. A file that is already there is never replaced.
+seeded, kept = [], 0
+for root, _, files in os.walk(scaffold):
+    for f in sorted(files):
+        src = os.path.join(root, f)
+        rel = os.path.relpath(src, scaffold)
+        dest = os.path.join(vault, rel)
+        if os.path.exists(dest):
+            kept += 1
+            continue
+        seeded.append(rel)
+        if not dry:
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copyfile(src, dest)
+if seeded:
+    print("  memory: seeding %s" % ", ".join(seeded))
+if kept:
+    print("  memory: %d scaffold file(s) already there — kept yours" % kept)
 
 if os.path.islink(auto):
     target = os.path.realpath(auto)
@@ -220,10 +234,11 @@ else:
         os.makedirs(os.path.dirname(auto), exist_ok=True)
         os.symlink(vault, auto)
 
-print("  memory: open %s as an Obsidian vault; add .claude/memory/.obsidian/ to .gitignore and"
+print("  memory: open %s as an Obsidian vault. Point its Templates plugin at the vault's"
       % os.path.relpath(vault, project))
-print("          decide deliberately whether the notes themselves are committed (they are the")
-print("          team's memory if they are, and one person's if they are not)")
+print("          templates/ folder, add .claude/memory/.obsidian/ to .gitignore, and decide")
+print("          deliberately whether the notes themselves are committed (they are the team's")
+print("          memory if they are, and one person's if they are not)")
 PY
 fi
 

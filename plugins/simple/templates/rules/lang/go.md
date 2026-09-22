@@ -20,8 +20,8 @@ paths:
 - Package sentinel: `var ErrThing = errors.New("package: ...")`. Wrap with `fmt.Errorf("...: %w", err)`, compare with
   `errors.Is`. Never compare error strings.
 - **An error is not an empty result.** `if err != nil { treat as "none" }` turns a dropped connection into "no owner",
-  "no mandate", "no permission" — and then writes something wrong. Separate "genuinely absent" (`ErrNotFound`) from
-  "the read failed", and stop on the second.
+  "no parent row", "no permission" — and then writes something wrong. Separate "genuinely absent" (`ErrNotFound`)
+  from "the read failed", and stop on the second.
 
 ## Context and transactions
 - `ctx context.Context` is the first parameter of every service and repository method. Handlers pass the request

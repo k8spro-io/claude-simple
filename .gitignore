@@ -2,5 +2,5 @@
 *.pyc
 __pycache__/
 
-# Estado de UI do Obsidian no vault de memoria (as notas SIM sao versionadas)
+# Obsidian per-user UI state inside the memory vault (the notes themselves ARE versioned)
 .claude/memory/.obsidian/
