@@ -36,7 +36,7 @@ A finding with no `file:line` and no failure scenario is an opinion, not a findi
    client/handle checks out a second connection and can deadlock under load. Publishing an event or calling HTTP
    inside the transaction belongs here too.
 4. **An error treated as an empty result.** `if err != nil { treat as "none" }`, `except: return []`,
-   `catch { return null }` — a dropped connection becomes "this record has no owner / no mandate / no permission",
+   `catch { return null }` — a dropped connection becomes "this record has no owner / no parent / no permission",
    and the code then commits something wrong.
 5. **Concurrency.** Read-modify-write where an atomic operation or a constraint was needed; a check-then-act with no
    unique index behind it; shared mutable state across requests (a module-level variable on a server, a scoped

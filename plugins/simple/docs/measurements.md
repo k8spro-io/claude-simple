@@ -1,7 +1,7 @@
 # What was measured, and how
 
-The setup's owner changed the default orchestration policy on 2026-09-21, to delegate by default. The numbers below
-are unchanged — they remain the known cost of that choice, not an argument against it.
+This setup's default is to delegate: the main session orchestrates and the execution goes to a worker. The numbers
+below are the known cost of that choice, not an argument against it.
 
 Every cost claim in this plugin comes from a controlled run, not from intuition. This document gives the findings and
 the protocol, so you can reproduce them on your own repository — which you should, because the magnitudes depend on
@@ -104,7 +104,7 @@ Stated plainly so nobody cites it as evidence:
 
 - **The rule files themselves.** Whether `.claude/rules/lang-go.md` improves output has not been isolated in a
   controlled run. They are written from real review findings, which is a reason to believe them — not a measurement.
-- **The rule packs for languages this setup's owner does not ship in production.** The Go, TypeScript/Nuxt, TiDB and
+- **The rule packs for languages this setup was not built against.** The Go, TypeScript/Nuxt, TiDB and
   CI packs come from a production monorepo and its review history. Java, Python, Rust, PHP, Ruby, C#, Elixir, Scala,
   C/C++, Dart, Swift, Zig, Clojure, the front-end frameworks other than Vue, and most of the `orm/` packs are
   distilled ecosystem knowledge: each rule is a failure mode that is well documented and widely hit, written in the
