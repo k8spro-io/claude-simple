@@ -102,6 +102,23 @@ claude -p "$PROMPT" --output-format stream-json --verbose > arm-a.jsonl
 
 Stated plainly so nobody cites it as evidence:
 
-- **The rule files themselves.** Whether `.claude/rules/go.md` improves output has not been isolated in a controlled
-  run. They are written from real review findings, which is a reason to believe them — not a measurement.
+- **The rule files themselves.** Whether `.claude/rules/lang-go.md` improves output has not been isolated in a
+  controlled run. They are written from real review findings, which is a reason to believe them — not a measurement.
+- **The rule packs for languages this setup's owner does not ship in production.** The Go, TypeScript/Nuxt, TiDB and
+  CI packs come from a production monorepo and its review history. Java, Python, Rust, PHP, Ruby, C#, Elixir, Scala,
+  C/C++, Dart, Swift, Zig, Clojure, the front-end frameworks other than Vue, and most of the `orm/` packs are
+  distilled ecosystem knowledge: each rule is a failure mode that is well documented and widely hit, written in the
+  same MUST/NEVER shape. They have not been through a controlled run, and they have not been through *this* team's
+  review history either. Treat them as a strong default to edit, not as evidence.
+- **The model policy per agent.** The reasoning is in [`model-policy.md`](model-policy.md); the specific assignment
+  (haiku reader, sonnet implementer, opus reviewer) has not been benchmarked against the alternatives on a
+  multi-language corpus. If you run that measurement, the protocol above is the one to use.
+- **That installing every rule pack is free.** The claim rests on two things: no listing of rule files appears in the
+  session prefix (unlike skills and agents, which are listed), and a rule loads when a tool touches a path its glob
+  matches. Both were checked by reading the harness, not by a controlled measurement. If you want certainty for your
+  repo, install the packs, start a session, and compare the first request's input tokens with and without them.
+- **The memory vault symlink.** `--memory` points the harness's auto-memory folder at `.claude/memory/` in the repo.
+  The filesystem behaviour was verified (notes already there are moved, and a write to the old path lands in the
+  vault); that a live session's memory scan follows the symlink was **not** verified end to end. Check it once, on
+  your own repo, before trusting it with anything you care about.
 - **The statusline and the two hooks.** They are ergonomics. No cost claim is made for them.

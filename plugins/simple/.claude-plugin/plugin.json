@@ -1,22 +1,41 @@
 {
   "name": "simple",
-  "version": "0.1.3",
-  "description": "A lean Claude Code setup for Go + Nuxt/TypeScript + TiDB: grep-first navigation, workflow workers without dead context, a hook that blocks whole-file reads of huge files, a statusline with live cost and weekly usage, and the method for measuring a plugin before adopting it.",
+  "version": "0.2.0",
+  "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a cost statusline, and the method for measuring a plugin before adopting it.",
   "author": {
     "name": "k8spro"
   },
   "repository": "https://github.com/k8spro-io/claude-simple",
   "license": "MIT",
   "keywords": [
+    "polyglot",
     "go",
-    "golang",
-    "nuxt",
+    "java",
+    "python",
     "typescript",
+    "rust",
+    "php",
+    "ruby",
+    "csharp",
+    "elixir",
+    "react",
+    "vue",
+    "angular",
+    "svelte",
+    "orm",
+    "gorm",
+    "hibernate",
+    "sqlalchemy",
+    "prisma",
+    "postgres",
+    "mysql",
     "tidb",
+    "mongodb",
     "tokens",
     "cost",
+    "prompt-caching",
     "agents",
-    "workflow",
-    "statusline"
+    "statusline",
+    "obsidian"
   ]
 }

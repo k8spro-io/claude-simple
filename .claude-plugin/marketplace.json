@@ -1,29 +1,48 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-simple",
-  "description": "A lean Claude Code setup for Go + Nuxt/TypeScript + TiDB teams, distilled from a production monorepo and from what survived cost-per-fix measurement.",
+  "description": "A lean, measurement-first Claude Code setup for any stack: role-based agents, path-triggered rule packs per language, framework, ORM and database, and the project's memory kept in the repository.",
   "owner": {
     "name": "k8spro"
   },
   "plugins": [
     {
       "name": "simple",
-      "description": "Agents, skills, hooks, a statusline and a one-command project setup for working on Go + Nuxt/TypeScript + TiDB codebases with fewer tokens: grep-first navigation, lean workflow workers, a guard against reading huge files, a delivery gate, and the method for measuring a plugin before adopting it.",
+      "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a cost statusline, and the method for measuring a plugin before adopting it.",
       "author": {
         "name": "k8spro"
       },
       "category": "productivity",
       "keywords": [
+        "polyglot",
         "go",
-        "golang",
-        "nuxt",
+        "java",
+        "python",
         "typescript",
+        "rust",
+        "php",
+        "ruby",
+        "csharp",
+        "elixir",
+        "react",
+        "vue",
+        "angular",
+        "svelte",
+        "orm",
+        "gorm",
+        "hibernate",
+        "sqlalchemy",
+        "prisma",
+        "postgres",
+        "mysql",
         "tidb",
+        "mongodb",
         "tokens",
         "cost",
+        "prompt-caching",
         "agents",
-        "workflow",
-        "statusline"
+        "statusline",
+        "obsidian"
       ],
       "source": "./plugins/simple"
     }
