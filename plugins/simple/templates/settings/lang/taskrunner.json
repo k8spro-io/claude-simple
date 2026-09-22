@@ -1,0 +1,14 @@
+{
+  "//": "simple: command allowances for the taskrunner stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(task:*)",
+      "Bash(task --list:*)",
+      "Bash(make test:*)",
+      "Bash(make check:*)",
+      "Bash(make build:*)",
+      "Bash(just --list)",
+      "Bash(just test:*)"
+    ]
+  }
+}

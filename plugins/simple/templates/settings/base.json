@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "//": "Recommended project settings installed by /simple:setup. Merged key by key \u2014 anything you already have is kept. Read plugins/simple/docs/permissions.md before changing the lists: deny ALWAYS beats allow, and a Read() deny also blocks Edit and Write on the same path.",
+  "//": "Recommended project settings installed by /simple:setup. Merged key by key — anything you already have is kept. Language-specific command allowances come from templates/settings/lang/*.json, added only for the stacks detected in this repo. Read docs/permissions.md before changing the lists: deny ALWAYS beats allow, and a Read() deny also blocks Edit and Write on the same path.",
   "env": {
     "CLAUDE_CODE_WORKFLOW_MAX_CONCURRENT_AGENTS": "4"
   },
@@ -13,10 +13,6 @@
         "repo": "anthropics/claude-plugins-official"
       }
     }
-  },
-  "enabledPlugins": {
-    "gopls-lsp@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
   },
   "claudeMdExcludes": [
     "**/node_modules/**",
@@ -102,31 +98,31 @@
       "Read(**/*.keystore)",
       "Read(**/*.jks)",
       "Read(**/*.pem)",
-      "Read(**/id_rsa*)"
+      "Read(**/id_rsa*)",
+      "Read(**/target/**)",
+      "Read(**/bin/**)",
+      "Read(**/obj/**)",
+      "Read(**/.gradle/**)",
+      "Read(**/.dart_tool/**)",
+      "Read(**/Pods/**)",
+      "Read(**/DerivedData/**)",
+      "Read(**/zig-cache/**)",
+      "Read(**/.zig-cache/**)",
+      "Read(**/_build/**)",
+      "Read(**/deps/**)",
+      "Read(**/.bundle/**)",
+      "Read(**/site-packages/**)",
+      "Read(**/Cargo.lock)",
+      "Read(**/composer.lock)",
+      "Read(**/Gemfile.lock)",
+      "Read(**/poetry.lock)",
+      "Read(**/uv.lock)",
+      "Read(**/yarn.lock)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/id_ed25519*)"
     ],
     "allow": [
-      "Bash(go build:*)",
-      "Bash(go vet:*)",
-      "Bash(go test:*)",
-      "Bash(go list:*)",
-      "Bash(go doc:*)",
-      "Bash(go env:*)",
-      "Bash(go mod tidy)",
-      "Bash(go mod download)",
-      "Bash(go mod why:*)",
-      "Bash(gofmt:*)",
-      "Bash(goimports:*)",
-      "Bash(golangci-lint run:*)",
-      "Bash(bun run typecheck)",
-      "Bash(bun run lint)",
-      "Bash(bun run test)",
-      "Bash(npm run typecheck)",
-      "Bash(npm run lint)",
-      "Bash(npm test)",
-      "Bash(npx tsc --noEmit:*)",
-      "Bash(task test:*)",
-      "Bash(task --list*)",
-      "Bash(make test*)",
       "Bash(rg:*)",
       "Bash(grep:*)",
       "Bash(awk:*)",

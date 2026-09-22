@@ -45,10 +45,9 @@ paths:
 - A test that never ran red proves nothing. Revert the change, watch it fail, reapply.
 - Tests that need a real database read the DSN from the environment and `t.Skipf` when it is absent — never `t.Fatal`,
   or the suite is red for everyone without a database.
-- **GORM `DryRun` trap:** under DryRun the driver skips `Scan`, so `Take`/`First` return a **nil** error and a zero
-  struct, never `ErrRecordNotFound`. A "not found" test written that way passes with the fix reverted. Inject the
-  failure with a callback (`Before("gorm:query")`) instead. DryRun is still the right tool for proving *which SQL was
-  issued on which handle*.
+- **The ORM has its own trap file.** If this repo uses GORM, Ent or sqlc, the matching `orm/` rule carries the
+  query, transaction and false-green-test traps for it — including the GORM `DryRun` trap that has produced
+  passing tests with the fix reverted.
 
 ## Local gate
 - `go build ./... && go vet ./... && go test ./...` on what you touched, plus `gofmt -l` clean.

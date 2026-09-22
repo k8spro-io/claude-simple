@@ -1,3 +1,6 @@
 .DS_Store
 *.pyc
 __pycache__/
+
+# Estado de UI do Obsidian no vault de memoria (as notas SIM sao versionadas)
+.claude/memory/.obsidian/

@@ -4,6 +4,14 @@
 choice in it, including the ones you may want to reverse, and — more importantly — **what these lists cannot protect
 you from**.
 
+The block is assembled from two places: `templates/settings/base.json`, which is the same for every project, and one
+fragment per stack you name, under `templates/settings/lang/` (`go.json`, `python.json`, `java.json`, `node.json`,
+`rust.json`, `php.json`, `ruby.json`, `dotnet.json`, `elixir.json`, `scala.json`, `cpp.json`, `dart.json`,
+`swift.json`, `zig.json`, `clojure.json`, `shell.json`, `taskrunner.json`, `infra.json`). A repository with no Java
+in it never gets the Maven allowances: you name the stacks (`--stack go,node`), `--list-stacks` prints the valid
+names, and an unknown one is reported and ignored. Nothing is detected automatically — this is the one place in the
+setup where a wrong guess would silently widen what runs without asking, so it is a decision you make.
+
 ## Four mechanics you have to know before editing them
 
 1. **`deny` always beats `allow`.** You cannot re-permit a denied command by adding it to `allow`. A denied command is
@@ -78,11 +86,14 @@ belong to a human with a changelog in hand.
 
 Two groups:
 
-- **Noise that burns context**: `node_modules`, `vendor`, `.git`, `.nuxt`, `.output`, `.next`, `dist`, `build`,
-  `coverage`, `.venv`, `__pycache__`, `.terraform`, worktrees, and lock files. Reading these is almost always an
+- **Noise that burns context**, across every ecosystem: `node_modules`, `vendor`, `.git`, `.nuxt`, `.output`, `.next`,
+  `dist`, `build`, `target` (Rust/JVM), `bin`/`obj` (.NET), `.gradle`, `_build` and `deps` (Elixir), `.dart_tool`,
+  `Pods` and `DerivedData` (Swift), `zig-cache`, `site-packages`, `.venv`, `__pycache__`, `coverage`, `.terraform`,
+  worktrees, and every lock file (`go.sum`, `package-lock.json`, `bun.lock`, `pnpm-lock.yaml`, `yarn.lock`,
+  `Cargo.lock`, `composer.lock`, `Gemfile.lock`, `poetry.lock`, `uv.lock`). Reading these is almost always an
   accident, and one of them can cost more tokens than the task.
-- **Credentials**: `.env` and its variants, `*.pem`, `*.keystore`, `*.jks`, `id_rsa*`. See mechanic 3 — this stops the
-  accidental read, not a determined one.
+- **Credentials**: `.env` and its variants, `*.pem`, `*.p12`, `*.pfx`, `*.keystore`, `*.jks`, `id_rsa*`,
+  `id_ed25519*`. See mechanic 3 — this stops the accidental read, not a determined one.
 
 **Images are deliberately readable.** An earlier draft denied `*.png`/`*.jpg` to save tokens. That was wrong for a
 front-end setup: "look at this screenshot and tell me why the layout breaks" is a real, common, valuable task. If you
@@ -91,16 +102,22 @@ never do it and want the tokens back, add them yourself.
 ## What is allowed, and why that list is short
 
 `allow` pre-approves commands so you are not prompted. Everything on it is either **read-only** or **a test/format
-command whose only effect is on files you already own**: the Go toolchain's read commands, `gofmt`/`goimports`/
-`golangci-lint run`, typecheck and lint scripts, the read-only shell (`rg`, `sed -n`, `jq`, `stat`, `diff`, …),
-read-only `git`, read-only `gh`, and read-only `docker`/`kubectl`.
+command whose only effect is on files you already own**.
+
+The base list is the language-agnostic half: the read-only shell (`rg`, `sed -n`, `jq`, `stat`, `diff`, …), read-only
+`git`, read-only `gh`, read-only `docker`/`kubectl`. Each stack fragment adds that ecosystem's build, test, lint and
+format commands — `go build`/`go vet`/`go test`/`gofmt`, `pytest`/`ruff`/`mypy`, `mvn verify`/`./gradlew test`,
+`cargo test`/`cargo clippy`, `dotnet test`, `mix test`, `bundle exec rspec`, `vendor/bin/phpunit`, `flutter test`,
+`swift test`, `zig build test`, and the repo's own task runner (`task`, `make test`, `just test`).
 
 Three things you might expect and will not find:
 
 - **`curl` and `wget`.** Any allowed network command is an exfiltration path for anything the session can read. If you
   need one, allow the exact URL prefix, not the binary.
-- **`go run`, `node`, `bunx`, `npx <anything>`.** They execute arbitrary code by definition; allowing them is the same
-  as allowing everything.
+- **`go run`, `node`, `bunx`, `npx <anything>`, a bare `uv run` / `poetry run`.** They execute arbitrary code by
+  definition; allowing them is the same as allowing everything. Repository-defined scripts (`npm run <script>`,
+  `task <target>`) are allowed, because what they do is reviewable in the repo — and `uv run` appears only in the
+  pinned forms (`uv run pytest`, `uv run ruff`, `uv run mypy`).
 - **`find`.** Innocent until someone writes `-delete` or `-exec rm`. Use `rg --files` or `ls`, which are allowed.
 
 `sed` appears only as `sed -n:*` — the read-only form. Plain `sed -i` edits files in place and is not pre-approved.

@@ -1,0 +1,14 @@
+{
+  "//": "simple: command allowances for the ruby stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(bundle install)",
+      "Bash(bundle exec rspec:*)",
+      "Bash(bundle exec rubocop:*)",
+      "Bash(bundle exec rake test:*)",
+      "Bash(bundle exec brakeman:*)",
+      "Bash(rails routes)",
+      "Bash(ruby -v)"
+    ]
+  }
+}

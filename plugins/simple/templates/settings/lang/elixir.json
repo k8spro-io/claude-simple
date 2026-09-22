@@ -1,0 +1,14 @@
+{
+  "//": "simple: command allowances for the elixir stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(mix test:*)",
+      "Bash(mix format:*)",
+      "Bash(mix credo:*)",
+      "Bash(mix compile:*)",
+      "Bash(mix deps.get)",
+      "Bash(mix deps.tree)",
+      "Bash(mix dialyzer:*)"
+    ]
+  }
+}

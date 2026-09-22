@@ -1,0 +1,15 @@
+{
+  "//": "simple: command allowances for the dart stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(flutter test:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub get)",
+      "Bash(flutter doctor)",
+      "Bash(dart format:*)",
+      "Bash(dart analyze:*)",
+      "Bash(dart test:*)",
+      "Bash(dart pub get)"
+    ]
+  }
+}

@@ -48,18 +48,25 @@ Keep this list short and real. Each line is a rule someone has already broken, o
 | running the app, ports, deploy | skill `<name>` |
 | reading a spec or decision record | skill `<name>` |
 | a new decision record | skill `adr` |
+| a durable fact worth keeping | skill `project-memory` (vault in `.claude/memory/`) |
 | finding code without burning context | skill `code-navigation` |
+| keeping a long session cheap | skill `context-economy` |
+| the bar for saying "done" | skill `delivery-gate` |
 
-Rules in `.claude/rules/` load themselves when a tool touches a matching path — they are not listed here.
+Rules in `.claude/rules/` load themselves when a tool touches a matching path — the language, framework, ORM and
+database specifics live there and are **not** listed here. Adding them to this file would make every request pay for
+knowledge that is only relevant to one file in the repository.
 
 ## Orchestration
 
 - **Delegating is the default.** The main session orchestrates: understand the request, map `file:line`, decide,
   dispatch. Execution goes to a subagent, a task or a Workflow — a Workflow when there is real parallelism (disjoint
   lanes), a subagent for everything else.
-- **Model by layer.** Map / read / review → **haiku** worker. Implement → **sonnet** worker. The big model only
-  orchestrates. A lean worker (`omitClaudeMd: true`) is still the right shape for one: it cuts the fixed context per
-  request from 18.1k tokens to 4.8k. See skill `cost-per-fix` for what this costs and what it buys.
+- **Model by layer.** Map / read → **haiku** worker (`wf-reader`). Implement → **sonnet** worker (`wf-implementer`,
+  `front-implementer`). Review and anything touching the schema → **opus** (`diff-reviewer`, `data-specialist`),
+  because that is where a mistake is expensive and the answer is short. A lean worker (`omitClaudeMd: true`) is the
+  right shape for all of them: it cuts the fixed context per request from 18.1k tokens to 4.8k. See skill
+  `cost-per-fix` for what this costs and what it buys.
 - **Two exceptions, and only these two.** The release gate runs in the orchestrating session — the invariant above
   requires output that was actually seen, and a worker's report is not seen output. Harness config (`settings.json`,
   hooks, the plugin itself) also stays in the orchestrating session, because a subagent refuses to edit it.
