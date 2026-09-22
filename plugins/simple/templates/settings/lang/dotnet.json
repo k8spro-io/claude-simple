@@ -1,0 +1,13 @@
+{
+  "//": "simple: command allowances for the dotnet stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet list package)",
+      "Bash(dotnet --info)"
+    ]
+  }
+}

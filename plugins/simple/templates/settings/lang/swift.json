@@ -1,0 +1,12 @@
+{
+  "//": "simple: command allowances for the swift stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(swift build:*)",
+      "Bash(swift test:*)",
+      "Bash(swiftformat:*)",
+      "Bash(swiftlint:*)",
+      "Bash(xcodebuild -list:*)"
+    ]
+  }
+}

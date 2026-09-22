@@ -1,0 +1,20 @@
+{
+  "//": "simple: command allowances for the java stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(mvn -q:*)",
+      "Bash(mvn -B:*)",
+      "Bash(mvn test:*)",
+      "Bash(mvn verify:*)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn dependency:tree)",
+      "Bash(./gradlew build:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew check:*)",
+      "Bash(./gradlew tasks:*)",
+      "Bash(./gradlew dependencies:*)",
+      "Bash(java -version)",
+      "Bash(javac -version)"
+    ]
+  }
+}

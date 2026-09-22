@@ -1,0 +1,10 @@
+{
+  "//": "simple: command allowances for the kotlin stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew ktlintCheck:*)",
+      "Bash(./gradlew detekt:*)",
+      "Bash(kotlinc -version)"
+    ]
+  }
+}

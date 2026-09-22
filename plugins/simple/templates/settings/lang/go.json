@@ -1,0 +1,32 @@
+{
+  "//": "simple: command allowances for the go stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(go build:*)",
+      "Bash(go vet:*)",
+      "Bash(go test:*)",
+      "Bash(go list:*)",
+      "Bash(go doc:*)",
+      "Bash(go env:*)",
+      "Bash(go mod tidy)",
+      "Bash(go mod download)",
+      "Bash(go mod why:*)",
+      "Bash(go generate:*)",
+      "Bash(gofmt:*)",
+      "Bash(goimports:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(staticcheck:*)"
+    ]
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
+  }
+}

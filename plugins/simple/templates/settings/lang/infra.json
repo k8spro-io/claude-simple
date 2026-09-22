@@ -1,0 +1,15 @@
+{
+  "//": "simple: command allowances for the infra stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(docker compose config:*)",
+      "Bash(docker image inspect:*)",
+      "Bash(terraform fmt:*)",
+      "Bash(terraform validate:*)",
+      "Bash(terraform plan:*)",
+      "Bash(helm template:*)",
+      "Bash(helm list:*)",
+      "Bash(kubectl diff:*)"
+    ]
+  }
+}

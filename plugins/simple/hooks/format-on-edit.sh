@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# PostToolUse (Edit|Write|MultiEdit|NotebookEdit): formats the file that was just edited.
-#   .go                      -> gofmt -w
-#   .ts .tsx .vue .mjs .cjs  -> eslint --fix, run from the package that OWNS the file
+# PostToolUse (Edit|Write|MultiEdit|NotebookEdit): formats the file that was just edited, with
+# whatever formatter that language uses and this machine actually has.
 # Always silent, always exit 0 — formatting must never fail a turn.
+#
+# Set SIMPLE_FORMAT_OFF=1 to disable.
 #
 # Details that matter, learned the hard way:
 #   - read tool_response.filePath BEFORE tool_input.file_path: PostToolUse delivers the resolved
@@ -16,10 +17,15 @@
 #     relative to the config's own directory, and the file ends up "ignored because no matching
 #     configuration was supplied".
 #
-# KNOWN COST: gofmt and eslint --fix rewrite the file AFTER the Edit, so the next Edit on the same
-# file fails with "File content has changed since it was last read" and needs a fresh Read. That is
-# the price of never committing unformatted code; if it bothers you, disable this hook.
+# NOT formatted here, on purpose: Java/Kotlin (spotless runs through Gradle and takes seconds),
+# C# (`dotnet format` is project-wide), and anything whose formatter needs a full build. Those
+# belong in the repo's own gate, not in a per-edit hook.
+#
+# KNOWN COST: the formatter rewrites the file AFTER the Edit, so the next Edit on the same file
+# fails with "File content has changed since it was last read" and needs a fresh Read. That is the
+# price of never committing unformatted code; if it bothers you, disable this hook.
 set -uo pipefail
+[ "${SIMPLE_FORMAT_OFF:-0}" = "1" ] && exit 0
 input="$(cat)"
 root="${CLAUDE_PROJECT_DIR:-$PWD}"
 
@@ -55,32 +61,93 @@ case "$file_path" in
   *) exit 0 ;;
 esac
 case "$file_path" in
-  */node_modules/*|*/dist/*|*/build/*|*/.git/*|*/vendor/*|*/.output/*|*/.nuxt/*|*/.claude/worktrees/*) exit 0 ;;
+  */node_modules/*|*/dist/*|*/build/*|*/.git/*|*/vendor/*|*/.output/*|*/.nuxt/*|*/target/*|*/.venv/*|*/bin/*|*/obj/*|*/.claude/worktrees/*) exit 0 ;;
 esac
+
+run() { timeout 12 "$@" >/dev/null 2>&1 || true; }
+have() { command -v "$1" >/dev/null 2>&1; }
 
 case "$file_path" in
   *.go)
-    command -v gofmt >/dev/null 2>&1 && gofmt -w "$file_path" 2>/dev/null || true
+    have gofmt && run gofmt -w "$file_path"
     ;;
-  *.ts|*.tsx|*.vue|*.mjs|*.cjs|*.js)
+  *.py)
+    if have ruff; then
+      run ruff format "$file_path"
+    elif have black; then
+      run black -q "$file_path"
+    fi
+    ;;
+  *.rs)
+    have rustfmt && run rustfmt --edition 2021 "$file_path"
+    ;;
+  *.rb)
+    have rubocop && run rubocop -a --force-exclusion "$file_path"
+    ;;
+  *.dart)
+    have dart && run dart format "$file_path"
+    ;;
+  *.ex|*.exs)
+    have mix && (cd "$root" && run mix format "$file_path")
+    ;;
+  *.zig)
+    have zig && run zig fmt "$file_path"
+    ;;
+  *.swift)
+    have swiftformat && run swiftformat "$file_path"
+    ;;
+  *.tf|*.tfvars)
+    have terraform && run terraform fmt "$file_path"
+    ;;
+  *.sh|*.bash)
+    have shfmt && run shfmt -w "$file_path"
+    ;;
+  *.c|*.cc|*.cpp|*.h|*.hpp)
+    if have clang-format; then
+      dir="$dir_abs"
+      while [ -n "$dir" ] && [ "$dir" != "/" ] && [ "${#dir}" -ge "${#root}" ]; do
+        [ -f "$dir/.clang-format" ] && { run clang-format -i "$file_path"; break; }
+        dir="$(dirname "$dir")"
+      done
+    fi
+    ;;
+  *.php)
+    for cand in "$root"/vendor/bin/pint "$root"/vendor/bin/php-cs-fixer; do
+      [ -x "$cand" ] || continue
+      case "$cand" in
+        *pint) (cd "$root" && run "$cand" "$file_path") ;;
+        *)     (cd "$root" && run "$cand" fix "$file_path") ;;
+      esac
+      break
+    done
+    ;;
+  *.ts|*.tsx|*.vue|*.svelte|*.mjs|*.cjs|*.js|*.jsx)
     owner=""; dir="$dir_abs"
     while [ -n "$dir" ] && [ "$dir" != "/" ] && [ "${#dir}" -ge "${#root}" ]; do
       if ls "$dir"/eslint.config.* >/dev/null 2>&1; then owner="$dir"; break; fi
       dir="$(dirname "$dir")"
     done
-    [ -z "$owner" ] && exit 0          # no flat config anywhere above: nothing sane to run
 
-    bin=""
-    if [ -x "$owner/node_modules/.bin/eslint" ]; then
-      bin="$owner/node_modules/.bin/eslint"
-    else
-      for cand in "$root"/*/node_modules/.bin/eslint "$root"/*/*/node_modules/.bin/eslint; do
-        [ -x "$cand" ] && { bin="$cand"; break; }
-      done
+    if [ -n "$owner" ]; then
+      bin=""
+      if [ -x "$owner/node_modules/.bin/eslint" ]; then
+        bin="$owner/node_modules/.bin/eslint"
+      else
+        for cand in "$root"/*/node_modules/.bin/eslint "$root"/*/*/node_modules/.bin/eslint; do
+          [ -x "$cand" ] && { bin="$cand"; break; }
+        done
+      fi
+      [ -n "$bin" ] && (cd "$owner" && run "$bin" --fix --no-warn-ignored "$file_path")
+      exit 0
     fi
-    [ -z "$bin" ] && exit 0
 
-    (cd "$owner" && timeout 12 "$bin" --fix --no-warn-ignored "$file_path" >/dev/null 2>&1) || true
+    # No flat ESLint config anywhere above: fall back to Prettier if the project has one.
+    for cand in "$dir_abs/node_modules/.bin/prettier" "$root"/node_modules/.bin/prettier \
+                "$root"/*/node_modules/.bin/prettier; do
+      [ -x "$cand" ] || continue
+      (cd "$root" && run "$cand" --write --ignore-unknown "$file_path")
+      break
+    done
     ;;
 esac
 exit 0

@@ -1,0 +1,10 @@
+{
+  "//": "simple: command allowances for the scala stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(sbt compile:*)",
+      "Bash(sbt test:*)",
+      "Bash(sbt scalafmtCheckAll:*)"
+    ]
+  }
+}

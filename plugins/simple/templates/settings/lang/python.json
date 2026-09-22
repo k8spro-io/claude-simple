@@ -1,0 +1,28 @@
+{
+  "//": "simple: command allowances for the python stack. Merged into .claude/settings.json by /simple:setup when this stack is detected.",
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format:*)",
+      "Bash(black:*)",
+      "Bash(flake8:*)",
+      "Bash(mypy:*)",
+      "Bash(pyright:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(uv run mypy:*)",
+      "Bash(poetry run pytest:*)",
+      "Bash(poetry run ruff:*)",
+      "Bash(poetry run mypy:*)",
+      "Bash(uv sync)",
+      "Bash(uv pip list)",
+      "Bash(poetry install)",
+      "Bash(pip list:*)",
+      "Bash(pip show:*)",
+      "Bash(python -m venv:*)"
+    ]
+  }
+}
