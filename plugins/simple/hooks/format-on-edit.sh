@@ -21,6 +21,12 @@
 # C# (`dotnet format` is project-wide), and anything whose formatter needs a full build. Those
 # belong in the repo's own gate, not in a per-edit hook.
 #
+# TRUST: to format a file this hook runs a binary FROM THE REPOSITORY when the project ships one
+# (node_modules/.bin/eslint, node_modules/.bin/prettier, vendor/bin/pint, vendor/bin/php-cs-fixer) —
+# that is the only way to honour the project's own config. It is the same trust you extend by running
+# `npm test` in a clone, except it happens on your first edit, without you typing anything. In a
+# repository you have not read, export SIMPLE_FORMAT_OFF=1 before opening the session.
+#
 # KNOWN COST: the formatter rewrites the file AFTER the Edit, so the next Edit on the same file
 # fails with "File content has changed since it was last read" and needs a fresh Read. That is the
 # price of never committing unformatted code; if it bothers you, disable this hook.

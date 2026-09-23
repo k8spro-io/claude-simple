@@ -130,7 +130,7 @@ def main():
     try:
         data = json.load(sys.stdin)
     except Exception:
-        print('statusline: json inválido'); return
+        print('statusline: invalid json'); return
 
     cwd = data.get('workspace', {}).get('current_dir') or data.get('cwd') or ''
     repo = data.get('workspace', {}).get('repo') or {}

@@ -122,6 +122,33 @@ Three things you might expect and will not find:
 
 `sed` appears only as `sed -n:*` — the read-only form. Plain `sed -i` edits files in place and is not pre-approved.
 
+## What the hooks run, and the trust that implies
+
+The permission lists govern what **Claude** may run. They say nothing about what the **hooks** run, because a hook is
+executed by the harness, not by the model — no prompt, no allow list, no way to deny it from `settings.json`.
+
+Two of them ship here, and only one touches anything outside itself:
+
+- `read-budget` reads the size of the file being opened and either allows the read or prints a message. It executes
+  nothing and sees no file content.
+- `format-on-edit` runs a formatter over the file you just edited. When the project ships its own
+  (`node_modules/.bin/eslint`, `node_modules/.bin/prettier`, `vendor/bin/pint`, `vendor/bin/php-cs-fixer`), it runs
+  **that binary, from the repository**, because that is the only way to honour the project's own configuration. For
+  everything else it runs what is on `PATH` (`gofmt`, `ruff`, `rustfmt`, `dart`, `mix`, …) and skips silently when
+  nothing is installed.
+
+That is the same trust you extend by typing `npm install && npm test` in a fresh clone — with one difference worth
+saying out loud: **it happens on your first edit, without you typing anything.** In a repository you have not read,
+disable it for the session:
+
+```bash
+SIMPLE_FORMAT_OFF=1 claude          # and SIMPLE_READ_BUDGET_OFF=1 for the other one
+```
+
+Neither hook makes a network call, and neither does the statusline: `statusline-weekly.py` parses your own session
+transcripts on disk to compute the weekly figures, and writes its cache next to them. Nothing in this plugin sends
+anything anywhere.
+
 ## Adapting this to your team
 
 Start by removing, not by adding. A deny entry your team genuinely needs will show up within a week as a blocked
