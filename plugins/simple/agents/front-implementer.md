@@ -43,4 +43,4 @@ read the matching `.claude/rules/front/*.md` if the repo has them — they outra
 
 ## Your report
 What changed by `file:line`, the pasted typecheck/lint output, what you did **not** verify (a typecheck is not a
-rendered page), capped at ~3,000 characters.
+rendered page). Nothing else — the caller pays for every line.

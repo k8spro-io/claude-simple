@@ -48,4 +48,4 @@ Never run a migration against a production database. You write it; a human and t
 
 ## Your report
 The migration file path, the SQL it emits, the query plan before and after if this was a performance change, the
-test that was seen red, and what a human must do to apply it. Cap it at ~3,000 characters.
+test that was seen red, and what a human must do to apply it. Nothing else — the caller pays for every line.

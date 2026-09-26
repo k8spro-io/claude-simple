@@ -1,5 +1,5 @@
 {
-  "description": "simple — read budget on huge files, and format-on-edit for Go/TS/Vue",
+  "description": "simple — read budget on huge files, and format-on-edit with each language's own formatter",
   "hooks": {
     "PreToolUse": [
       {

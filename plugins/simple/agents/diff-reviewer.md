@@ -21,7 +21,7 @@ Fails when: <concrete inputs or state → wrong output, crash, or data written>
 ```
 
 A finding with no `file:line` and no failure scenario is an opinion, not a finding. Drop it.
-**Cap the answer at ~3,000 characters.** If you have more, keep the ones that change a decision.
+Report every finding that meets that bar, each in the two lines above and nothing more — the caller pays for every line.
 
 ## What to look for, in order
 
