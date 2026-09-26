@@ -55,4 +55,4 @@ outrank anything you assume from general knowledge — they were written from th
 
 ## Your report
 What changed by `file:line`, how the test was seen red, the pasted output of the gate, and — explicitly — what you did
-**not** verify. Cap it at ~3,000 characters.
+**not** verify. Nothing else — the caller pays for every line.

@@ -50,7 +50,7 @@ Everything that is loaded on **every** request should earn its place:
 A subagent pays the whole context prefix again, in its own request, and it does not share your cache. It is cheaper than doing the work yourself only when it **replaces** reading you would otherwise do in the main session — mapping a package, sweeping many files, reviewing a diff — and when it is lean.
 
 - A worker that declares only the tools it needs and sets `omitClaudeMd: true` carries a far smaller fixed context than the default one. On the measured reference (see `docs/measurements.md`) that difference was 18.1k vs 4.8k tokens of fixed context per request, and it was the whole of a 61% cost gap.
-- **Cap every worker's answer at ~3,000 characters.** What comes back is paid for in your context, at full price, forever.
+- **Ask every worker for only what changes your next decision.** What comes back is paid for in your context, at full price, forever.
 - Give the worker the `file:line` you already mapped. Never let it re-derive understanding you already have.
 - Never delegate the release gate: the invariant is output you actually saw, and a worker's report is not that.
 

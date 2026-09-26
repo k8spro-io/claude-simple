@@ -10,7 +10,7 @@ Every agent in this plugin pins a model in its frontmatter. The rule behind the 
 | `wf-reader` | **haiku** | Mapping a package, locating symbols and reading a region is pattern work with an objective answer. It also produces the most tokens per unit of value, so it is the worst place to pay a premium. |
 | `wf-implementer` | **sonnet** | Writing a change plus a failing test in an unfamiliar language needs real judgement, and it is the bulk of the work in a session. Sonnet is the balance point. |
 | `front-implementer` | **sonnet** | Same shape of work, different traps (i18n, tokens, SSR boundaries). |
-| `diff-reviewer` | **opus** | A missed authorization bug or a false-green test costs orders of magnitude more than the review. The review runs once, reads a diff, and answers in 3,000 characters — the cheapest possible place to buy the best model. |
+| `diff-reviewer` | **opus** | A missed authorization bug or a false-green test costs orders of magnitude more than the review. The review runs once, reads a diff, and answers briefly — the cheapest possible place to buy the best model. |
 | `data-specialist` | **opus** | Schema and migration mistakes are the ones you cannot take back. Same argument, stronger. |
 
 Roughly, per input token, Sonnet costs about twice Haiku and Opus about five times it — with output priced the same

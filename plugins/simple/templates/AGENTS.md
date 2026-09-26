@@ -71,8 +71,8 @@ knowledge that is only relevant to one file in the repository.
   requires output that was actually seen, and a worker's report is not seen output. Harness config (`settings.json`,
   hooks, the plugin itself) also stays in the orchestrating session, because a subagent refuses to edit it.
 - **At most 4-6 subagents in parallel.** Past that the provider starts returning 429 and the work is lost.
-- **A subagent's answer is capped at ~3,000 characters:** verdict, the findings that change a decision, and the
-  path to the long report.
+- **A subagent's answer is short:** verdict, the findings that change a decision, and the path to the long
+  report.
 - **Never delegate understanding.** Map `file:line` yourself, then dispatch with the role, the constraints and
   the files. Authoring and review are separate passes — never self-approve.
 - **A third-party plugin or harness enters only with a measurement** of a whole session, n ≥ 2 (skill `cost-per-fix`).
