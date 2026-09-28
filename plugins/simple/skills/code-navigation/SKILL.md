@@ -71,7 +71,7 @@ Measured across a large sample of real sessions: loading the LSP **in its own tu
 
 So the rule is:
 
-- Emit `ToolSearch("select:LSP")` **in the same block** as your first `Bash`/`Grep` call of the session, never as a standalone turn.
+- Load it only when you expect several position-based lookups this session, and then emit `ToolSearch("select:LSP")` **in the same block** as a `Bash`/`Grep` call, never as a standalone turn.
 - Use it only when you already **have a position**: `goToDefinition`, `findReferences`, `incomingCalls`, `hover` (51–413 characters each). It replaces your *second* grep; it must not be added on top of it.
 - `workspaceSymbol` only for identifiers of 12 characters or more — shorter ones return a wall of matches.
 - **Never use `documentSymbol` as a file map.** It was 76% of all LSP output in the measurement (mean 7.9k characters, peak 25k). The `rg` one-liners above do the same job for half the price.

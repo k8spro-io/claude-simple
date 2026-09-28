@@ -10,7 +10,7 @@ You are an implementation worker on a front-end. Apply the change and prove it b
 
 ## First, identify the framework and load the repo's rules
 `rg -n '"(react|next|vue|nuxt|@angular/core|svelte|react-native|expo)"' package.json` tells you what this is. Then
-read the matching `.claude/rules/front/*.md` if the repo has them — they outrank your general knowledge.
+read the matching `.claude/rules/front-*.md` if the repo has them — they outrank your general knowledge.
 
 ## Required
 - The app's `typecheck` script (`bun run typecheck`, `npm run typecheck`, `tsc --noEmit`, `svelte-check`,

@@ -13,8 +13,8 @@ paths:
 - The `LSP` tool (gopls) is for when you already have a **position**: `goToDefinition`, `findReferences`,
   `incomingCalls`, `hover` (51–413 chars each). It replaces your second grep; it is never added on top of it.
   `workspaceSymbol` only for identifiers of 12+ characters.
-- The tool is deferred, and `ToolSearch("select:LSP")` costs a whole turn: emit it in the **same block** as the first
-  `Bash`/`Grep` of the session, never alone.
+- The tool is deferred, and `ToolSearch("select:LSP")` costs a whole turn: when you expect several
+  lookups, emit it in the **same block** as a `Bash`/`Grep` call, never alone.
 
 ## Errors
 - Package sentinel: `var ErrThing = errors.New("package: ...")`. Wrap with `fmt.Errorf("...: %w", err)`, compare with

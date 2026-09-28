@@ -53,7 +53,7 @@ Install the `simple` setup into the current project.
      `rg --files -g '<the glob>' | head`. Delete the packs for stacks they will never use if the file count bothers
      them.
    - The permission lists are a starting point. Anything in `deny` that the team genuinely needs should be removed
-     deliberately rather than worked around one prompt at a time (`docs/permissions.md`).
+     deliberately rather than worked around one prompt at a time (`${CLAUDE_PLUGIN_ROOT}/docs/permissions.md`).
    - If `--memory` ran: `.claude/memory/.obsidian/` belongs in `.gitignore`, and whether the notes themselves are
      committed is a decision — committed they are the team's memory, ignored they are one person's.
 

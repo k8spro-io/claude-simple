@@ -15,7 +15,7 @@ ls migrations db/migrate priv/repo/migrations 2>/dev/null
 rg -n 'gorm|ent\.|sqlc|hibernate|spring-data|sqlalchemy|alembic|django|prisma|drizzle|typeorm|mongoose|eloquent|doctrine|activerecord|EntityFramework|sqlx|diesel|ecto' \
    go.mod package.json pyproject.toml requirements.txt pom.xml build.gradle* composer.json Gemfile mix.exs Cargo.toml *.csproj 2>/dev/null | head
 ```
-Then read the matching `.claude/rules/orm/*.md` and `.claude/rules/db/*.md` if the repo has them. They outrank general
+Then read the matching `.claude/rules/orm-*.md` and `.claude/rules/db-*.md` if the repo has them. They outrank general
 knowledge: they carry the traps this project has already been bitten by.
 
 ## The rule that outranks everything else
