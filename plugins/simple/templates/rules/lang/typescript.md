@@ -11,7 +11,7 @@ Front-end framework specifics live in the `front/` rules. This one is about the 
 
 ## Navigation
 - Glob-scoped `rg` first, then `sed -n` on the region. Map a big file with `rg -nE '^(export )?(async )?(function|class|const|interface|type) ' file.ts`.
-- The `LSP` tool works **from a position** (`goToDefinition`, `findReferences`, `hover`) and replaces your second grep — never your first, and never as a file map. Load it in the same block as your first search; `ToolSearch` in its own turn costs more than it saves.
+- The `LSP` tool works **from a position** (`goToDefinition`, `findReferences`, `hover`) and replaces your second grep — never your first, and never as a file map. When you expect several lookups, load it in the same block as a search; `ToolSearch` in its own turn costs more than it saves.
 
 ## Types
 - No `any` to silence the compiler. `unknown` plus a narrowing check, or a proper type.
