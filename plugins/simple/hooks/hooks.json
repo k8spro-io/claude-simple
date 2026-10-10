@@ -1,5 +1,5 @@
 {
-  "description": "simple — read budget on huge files, and format-on-edit with each language's own formatter",
+  "description": "simple — read budget on huge files, format-on-edit with each language's own formatter, and the status line and side panes (a hooks module)",
   "hooks": {
     "PreToolUse": [
       {
@@ -25,5 +25,8 @@
         ]
       }
     ]
-  }
+  },
+  "modules": [
+    "./register.tsx"
+  ]
 }

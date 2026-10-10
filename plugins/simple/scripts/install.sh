@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # install.sh — installs the parts of `simple` that a plugin cannot ship by itself.
 #
-# A Claude Code plugin auto-loads agents, skills, commands and hooks. It CANNOT set permissions,
-# env, autoCompactWindow or a statusline, it cannot ship `.claude/rules/` (rules are a project
+# A Claude Code plugin auto-loads agents, skills, commands, hooks and mods; the status line is a mod,
+# so it ships inside the plugin and needs no install step. A plugin still CANNOT set permissions, env,
+# autoCompactWindow or a `statusLine` in settings, it cannot ship `.claude/rules/` (rules are a project
 # feature, matched by their own `paths:` globs), and it cannot create the project's memory vault.
-# This script writes those into the target project — merging, never clobbering.
+# This script writes the settings, rules and memory into the target project — merging, never clobbering.
 #
 # There is no stack detection here, on purpose. A rule file costs nothing until a tool touches a
 # path its `paths:` glob matches, so ALL rule packs are installed and the irrelevant ones simply
@@ -12,16 +13,24 @@
 # pass `--stack go,node,python` for those, or leave it out and get the language-agnostic base.
 #
 # Usage:
-#   install.sh [--project DIR] [--settings] [--rules] [--memory] [--statusline] [--lsp] [--all]
+#   install.sh [--project DIR] [--settings] [--rules] [--memory] [--lsp] [--all]
 #              [--stack a,b,c] [--no-binaries] [--dry-run] [--list-stacks]
+#   install.sh --remove-legacy-statusline [--dry-run]
 #
 # With no component flag, --all is assumed. Every write is idempotent: re-running it converges
 # instead of duplicating.
+#
+# --remove-legacy-statusline is the one step that edits USER settings, in $HOME/.claude, so it is
+# never part of --all or the default. Plugin versions up to 0.2.0 copied a status line script there
+# and pointed the user's `statusLine` at it; a mod cannot remove a settings status line, so until
+# that one goes both draw. This removes only what those versions installed — the exact setting, and
+# the scripts when they are byte-identical to a shipped copy — and says what it keeps. --statusline
+# is still accepted, because older instructions pass it, and only prints a notice.
 set -uo pipefail
 
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 PROJECT="${CLAUDE_PROJECT_DIR:-$PWD}"
-DO_SETTINGS=0; DO_RULES=0; DO_STATUSLINE=0; DO_LSP=0; DO_MEMORY=0
+DO_SETTINGS=0; DO_RULES=0; DO_LSP=0; DO_MEMORY=0; DO_LEGACY=0; NOTE_STATUSLINE=0
 DRY=0; ANY=0; BINARIES=1; STACK=""
 
 while [ $# -gt 0 ]; do
@@ -30,18 +39,19 @@ while [ $# -gt 0 ]; do
     --settings)     DO_SETTINGS=1; ANY=1; shift ;;
     --rules)        DO_RULES=1; ANY=1; shift ;;
     --memory)       DO_MEMORY=1; ANY=1; shift ;;
-    --statusline)   DO_STATUSLINE=1; ANY=1; shift ;;
+    --statusline)   NOTE_STATUSLINE=1; ANY=1; shift ;;
+    --remove-legacy-statusline) DO_LEGACY=1; ANY=1; shift ;;
     --lsp)          DO_LSP=1; DO_SETTINGS=1; ANY=1; shift ;;
-    --all)          DO_SETTINGS=1; DO_RULES=1; DO_MEMORY=1; DO_STATUSLINE=1; DO_LSP=1; ANY=1; shift ;;
+    --all)          DO_SETTINGS=1; DO_RULES=1; DO_MEMORY=1; DO_LSP=1; ANY=1; shift ;;
     --stack)        STACK="$2"; shift 2 ;;
     --no-binaries)  BINARIES=0; shift ;;
     --dry-run)      DRY=1; shift ;;
     --list-stacks)  ls "$PLUGIN_ROOT/templates/settings/lang" | sed 's/\.json$//' | tr '\n' ' '; echo; exit 0 ;;
-    -h|--help)      sed -n '2,20p' "$0"; exit 0 ;;
+    -h|--help)      sed -n '2,/^set -/{/^set -/!p;}' "$0"; exit 0 ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
-[ "$ANY" = 0 ] && { DO_SETTINGS=1; DO_RULES=1; DO_MEMORY=1; DO_STATUSLINE=1; DO_LSP=1; }
+[ "$ANY" = 0 ] && { DO_SETTINGS=1; DO_RULES=1; DO_MEMORY=1; DO_LSP=1; }
 
 command -v python3 >/dev/null 2>&1 || { echo "python3 is required" >&2; exit 1; }
 [ -d "$PROJECT" ] || { echo "not a directory: $PROJECT" >&2; exit 1; }
@@ -49,8 +59,11 @@ PROJECT="$(cd "$PROJECT" && pwd)"
 FRAGS="$(printf '%s' "$STACK" | tr ',' ' ')"
 
 echo "plugin : $PLUGIN_ROOT"
-echo "project: $PROJECT"
-echo "stacks : ${STACK:-none given (base permissions only — see --list-stacks)}"
+# A run that only cleans $HOME has no project to report.
+if [ $((DO_SETTINGS + DO_RULES + DO_MEMORY + DO_LSP)) -gt 0 ]; then
+  echo "project: $PROJECT"
+  echo "stacks : ${STACK:-none given (base permissions only — see --list-stacks)}"
+fi
 [ "$DRY" = 1 ] && echo "(dry run — nothing will be written)"
 echo
 
@@ -294,43 +307,112 @@ if [ "$DO_LSP" = 1 ]; then
 fi
 
 # ---------------------------------------------------------------- statusline
-if [ "$DO_STATUSLINE" = 1 ]; then
-  user_dir="$HOME/.claude"
-  if [ "$DRY" = 1 ]; then
-    echo "  statusline -> $user_dir/statusline.py (+ statusline-weekly.py), statusLine set in $user_dir/settings.json"
-  else
-    mkdir -p "$user_dir"
-    cp "$PLUGIN_ROOT/scripts/statusline.py" "$PLUGIN_ROOT/scripts/statusline-weekly.py" "$user_dir/"
-    chmod +x "$user_dir/statusline.py" "$user_dir/statusline-weekly.py"
-    python3 - "$user_dir" <<'PY'
-import json, os, sys
-user_dir = sys.argv[1]
+# The status line is a mod inside the plugin now: nothing is copied and no setting is written.
+if [ "$NOTE_STATUSLINE" = 1 ]; then
+  echo "  statusline: nothing to install — it ships inside the plugin (a mod) and is configured in /config."
+  echo "              If an older version set one up in ~/.claude/settings.json, both draw until that one"
+  echo "              is removed: --remove-legacy-statusline does it (add --dry-run to preview)."
+fi
+
+# Plugin versions up to 0.2.0 installed the status line at USER level: statusline.py and
+# statusline-weekly.py in $HOME/.claude, and a `statusLine` setting that runs the first one. A mod
+# cannot remove a settings status line, so this does — and only what those versions wrote: the exact
+# command, scripts byte-identical to a shipped copy, and the files the weekly refresh left behind.
+# One line per item. Settings that cannot be read are never treated as "nothing there": it stops.
+if [ "$DO_LEGACY" = 1 ]; then
+  [ -n "${HOME:-}" ] || { echo "HOME is not set — cannot find ~/.claude" >&2; exit 1; }
+  python3 - "$HOME/.claude" "$DRY" <<'PY'
+import hashlib, json, os, sys
+user_dir, dry = sys.argv[1], sys.argv[2] == "1"
+verb = "would remove" if dry else "removed"
+
+# What versions 0.1.0 - 0.2.0 wrote. The sha256 values cover every copy of each script they shipped.
+legacy_cmd = "python3 " + os.path.join(user_dir, "statusline.py")
+shipped = {
+    "statusline.py": {"0e04d20e482caa7ecae47942d72c137b057f5a1366817f101917c121dcf7553b",
+                      "f63273ec4d3c40af5e98fe17d443c2fbd1a935f91f5ed34341a0e1eabc1969e5"},
+    "statusline-weekly.py": {"80d3b12c83c0b49a76257d1d355ea80efd6fa120a9998cf1bc2340c2a39e188d"},
+}
+# What the weekly refresh (and the old renderer's lock) leave next to the scripts.
+runtime = ("statusline-weekly.json", "statusline-weekly-state.json", "statusline-weekly-state.json.tmp",
+           "statusline-weekly.json.tmp", ".statusline-weekly.lock")
+
+def remove(name, hashes=None, hold=None):
+    """Delete user_dir/name unless it is not what the plugin wrote. True when it is gone, or would be."""
+    p = os.path.join(user_dir, name)
+    if not os.path.lexists(p):
+        print(f"    {name}: absent")
+        return True
+    if hold:
+        print(f"    {name}: kept — {hold}")
+        return False
+    if os.path.islink(p) or not os.path.isfile(p):
+        print(f"    {name}: kept — not a regular file")
+        return False
+    if hashes:
+        try:
+            with open(p, "rb") as fh:
+                digest = hashlib.sha256(fh.read()).hexdigest()
+        except OSError as e:
+            print(f"    {name}: kept — could not be read ({e})")
+            return False
+        if digest not in hashes:
+            print(f"    {name}: kept — it differs from what the plugin shipped")
+            return False
+    if not dry:
+        try:
+            os.remove(p)
+        except OSError as e:
+            print(f"    {name}: kept — could not be removed ({e})")
+            return False
+    print(f"    {name}: {verb}")
+    return True
+
+print(f"  legacy statusline (what versions up to 0.2.0 installed), in {user_dir}:")
 path = os.path.join(user_dir, "settings.json")
 cur = {}
 if os.path.exists(path):
     try:
-        cur = json.load(open(path, encoding="utf-8"))
-    except Exception as e:
-        print(f"  ~/.claude/settings.json is not valid JSON ({e}) — set statusLine by hand")
+        with open(path, encoding="utf-8") as fh:
+            cur = json.load(fh)
+        if not isinstance(cur, dict):
+            raise ValueError("the top level is not an object")
+    except (OSError, ValueError) as e:
+        print(f"    settings.json could not be read as JSON ({e})")
+        print("    nothing was changed — fix it by hand, then run this again")
         sys.exit(0)
-want = {"type": "command",
-        "command": f"python3 {os.path.join(user_dir, 'statusline.py')}",
-        "padding": 0}
-if cur.get("statusLine") == want:
-    print("  statusline already configured")
-    sys.exit(0)
-if "statusLine" in cur:
-    print("  you already have a statusLine — leaving it alone. To switch, set:")
-    print(f"    \"statusLine\": {json.dumps(want)}")
-    sys.exit(0)
-cur["statusLine"] = want
-with open(path, "w", encoding="utf-8") as fh:
-    json.dump(cur, fh, indent=2, ensure_ascii=False)
-    fh.write("\n")
-print("  statusline installed and enabled in ~/.claude/settings.json")
+
+if "statusLine" not in cur:
+    print("    settings.json statusLine: absent")
+else:
+    sl = cur["statusLine"]
+    ours = (isinstance(sl, dict) and set(sl) <= {"type", "command", "padding"}
+            and sl.get("type") == "command" and sl.get("command") == legacy_cmd
+            and sl.get("padding", 0) == 0)
+    if not ours:
+        print("    settings.json statusLine: kept — it is not the one older versions installed")
+    else:
+        rest = {k: v for k, v in cur.items() if k != "statusLine"}
+        try:
+            if not dry:
+                with open(path, "w", encoding="utf-8") as fh:
+                    fh.write(json.dumps(rest, indent=2, ensure_ascii=False) + "\n")
+            cur = rest
+            print(f"    settings.json statusLine: {verb}")
+        except OSError as e:
+            print(f"    settings.json statusLine: kept — could not be written ({e})")
+
+# A statusLine that stays and still names the script must not lose it.
+left = cur.get("statusLine")
+cmd = left.get("command") if isinstance(left, dict) else None
+hold = "your statusLine still mentions statusline.py" if isinstance(cmd, str) and "statusline.py" in cmd else None
+remove("statusline.py", shipped["statusline.py"], hold)
+weekly_gone = remove("statusline-weekly.py", shipped["statusline-weekly.py"], hold)
+why = None if weekly_gone else "statusline-weekly.py is still here"
+for name in runtime:
+    remove(name, hold=why)
 PY
-  fi
 fi
 
 echo
-echo "done. Hooks, agents and skills come from the plugin itself — nothing to install for those."
+echo "done. Hooks, agents, skills and the status line come from the plugin itself — nothing to install for those."

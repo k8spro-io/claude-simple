@@ -145,9 +145,61 @@ disable it for the session:
 SIMPLE_FORMAT_OFF=1 claude          # and SIMPLE_READ_BUDGET_OFF=1 for the other one
 ```
 
-Neither hook makes a network call, and neither does the statusline: `statusline-weekly.py` parses your own session
-transcripts on disk to compute the weekly figures, and writes its cache next to them. Nothing in this plugin sends
-anything anywhere.
+Neither hook makes a network call.
+
+## What the status line and the side panes run, read and write
+
+The status line and the side panes are a Claude Code **mod**: Claude Code itself loads and runs them. Like a hook,
+a mod is not governed by the lists above — those decide what *Claude* may run, and the processes below are the mod's
+own, not the model's, so no permission prompt applies to them. The status line draws only in the terminal and in the
+desktop app's Code tab, not in the VS Code extension, in `claude -p` / SDK runs or in cloud sessions.
+
+**It runs**, as child processes without a shell:
+
+- `git --no-optional-locks …` in your working directory: about four per refresh, plus a `git log` of the branch's
+  commit subjects for the Work pane's ticket numbers, and three more on a branch change or a push, to read its remote
+  and upstream. They only query the repository, and `--no-optional-locks` keeps them from taking git's optional locks,
+  so they stay out of the way of your own `git` commands.
+- `gh api graphql --hostname github.com`: one read-only query per refresh, shared by the status line's pull request
+  and CI segments and the Work pane; it costs 1 point of GitHub's 5,000 an hour. **This is the only network call.** It
+  is `gh` itself, with your own login.
+- `python3 scripts/statusline-weekly.py`, for the 7-day per-model totals, at most every two minutes, with a cache that
+  sessions share. Without `python3` that segment is hidden.
+
+**When.** The git commands run after a prompt, a tool call that can write, the end of a turn and a change of working
+directory, and otherwise every minute. GitHub is asked only while someone can see the answer — the status line is
+drawn with its pull request and CI segments on (in the terminal or the desktop app), or the Work pane is on screen:
+every two minutes, every minute while checks or CI run; and fresh when the Work pane opens, after a push or a pull
+request command in the session, on a branch change, and when you refresh (`↻` in the Work pane, or
+`/workbench refresh`). Timer refreshes go through `gh`'s own on-disk `--cache`, so sessions on the same branch share
+one answer. The lists — the repository's open pull requests, your review requests, your assigned issues — are read
+only while the Work pane is on screen. A session makes at most 120 calls an hour, and a transient GitHub error backs
+off: 2, 4, 8, 16, then 30 minutes. After ten minutes with no prompt, turn or tool call the session goes idle and
+everything slows down (git every 5 minutes, GitHub every 10) until the next one. Nothing goes to GitHub at all when
+the repository's remote is not on github.com, `gh` is missing or not logged in, or
+`CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` is set to any non-empty value.
+
+**It reads:** the git repository you are in; what Claude Code reports about the session (model, effort, context,
+cost, plan limits, and the turns, tool calls and agents the Session pane shows); your settings, only to spot the
+`statusLine` older versions installed; and, for the weekly totals, your session transcripts under `<config>/projects`,
+where `<config>` is `CLAUDE_CONFIG_DIR` or `~/.claude`. The weekly script parses them in place, incrementally, and
+sends them nowhere.
+
+**It writes**, under `<config>/simple/`: `statusline-weekly.json` (the totals), `statusline-weekly-state.json` (how far
+into each transcript it has read) and `statusline-weekly.lock`; plus the plugin's own small store, which Claude Code
+keeps under `<config>/plugins/store/`: whether the legacy notice was shown, and which panes you closed by hand. Those,
+and the answers `gh` keeps in its own `--cache`, are the only files, and none of them is in your repository. What the
+Session pane shows stays in memory, never written or sent, and anything that looks like a token or a password is
+masked before it is drawn.
+
+**To turn it off**, use `/config` or `pluginConfigs["simple@claude-simple"].options` in your user settings.
+`statuslinePr` drops the pull request and CI segments; with the Work pane closed too, nothing asks GitHub.
+`statuslineWeekly` drops the weekly segment, which is the part that runs `python3` and parses the transcripts.
+`statusline` stops the status line from drawing, and `workbench` removes the side panes and `/workbench`. Disabling
+the plugin removes all of it along with everything else it ships.
+
+The GitHub query carries the repository's owner and name, the branch's name and the issue numbers found for it.
+Nothing else makes a network call, and none of your files, prompts or transcripts are sent anywhere.
 
 ## Adapting this to your team
 

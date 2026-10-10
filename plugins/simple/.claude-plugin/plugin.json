@@ -1,7 +1,7 @@
 {
   "name": "simple",
-  "version": "0.2.0",
-  "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a cost statusline, and the method for measuring a plugin before adopting it.",
+  "version": "0.3.0",
+  "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a status line and side panes drawn by the plugin itself (a mod), and the method for measuring a plugin before adopting it.",
   "author": {
     "name": "k8spro"
   },
@@ -36,6 +36,46 @@
     "prompt-caching",
     "agents",
     "statusline",
-    "obsidian"
-  ]
+    "obsidian",
+    "mods",
+    "github"
+  ],
+  "userConfig": {
+    "statusline": {
+      "type": "boolean",
+      "title": "Status line",
+      "description": "Draw the two-row status line under the prompt: directory, git, pull request and CI; model, effort, context, cache, cost and plan limits.",
+      "default": true
+    },
+    "statuslineAbovePrompt": {
+      "type": "boolean",
+      "title": "Status line above the prompt",
+      "description": "Draw the status line in the band above the prompt instead of under it.",
+      "default": false
+    },
+    "statuslineWeekly": {
+      "type": "boolean",
+      "title": "Status line weekly totals",
+      "description": "Show the 7-day token totals per model family. Runs python3 at most every two minutes.",
+      "default": true
+    },
+    "statuslinePr": {
+      "type": "boolean",
+      "title": "Status line pull request and CI",
+      "description": "Show the branch's pull request (review state) and its CI in the status line. Asks GitHub through one read-only gh api graphql call, shared with the side panes, every two minutes (every minute while checks run).",
+      "default": true
+    },
+    "workbench": {
+      "type": "boolean",
+      "title": "Side panes",
+      "description": "/workbench opens two side panes. Work: this branch's ticket, pull request (reviews, checks, merge state) and CI, the repository's open pull requests, your review requests and assigned issues. Session: MCP calls, agents, permission checks and a log. While Work is open, its GitHub part shares the one gh api graphql call.",
+      "default": true
+    },
+    "workbenchAutoOpen": {
+      "type": "boolean",
+      "title": "Open the side panes by themselves",
+      "description": "Open Work and Session beside the transcript once per session, in a fullscreen terminal at least 144 columns wide (110 once you have opened them yourself). Closing them stops this until you open them again with /workbench.",
+      "default": false
+    }
+  }
 }
