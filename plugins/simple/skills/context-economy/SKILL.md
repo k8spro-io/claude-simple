@@ -27,7 +27,7 @@ None of these are forbidden — they are just **not free**, and doing three of t
 
 **What does *not* hurt:** reading files, running commands, long tool outputs. Those append to the end of the prefix, which is exactly where you want volatile content. The cost of a tool result is paid once; the cost of invalidating the prefix is paid again on every remaining request of the session.
 
-**Check it, do not assume it.** The statusline installed by `/simple:setup` shows the live cache hit ratio. A ratio that collapses mid-session means something in the prefix moved — usually a config edit or a plugin toggle.
+**Check it, do not assume it.** The status line that ships with this plugin shows the prompt-cache hit ratio (terminal and desktop app only). It is a whole-session average over the main-loop requests, so it moves slowly: a single cache break — a config edit, a plugin toggle — shows as a dip that the following requests slowly recover, not as a collapse. A ratio that keeps sliding turn after turn means something in the prefix keeps moving.
 
 ## 2. Keep the prefix small
 

@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "simple",
-      "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a cost statusline, and the method for measuring a plugin before adopting it.",
+      "description": "A language-agnostic Claude Code setup: five role-based agents each pinned to the right model, 49 path-triggered rule packs covering 17 languages, 6 front-end frameworks, 16 ORMs, 5 databases and the infrastructure around them, a project memory vault you can open in Obsidian, two hooks, a status line and side panes drawn by the plugin itself (a mod), and the method for measuring a plugin before adopting it.",
       "author": {
         "name": "k8spro"
       },
@@ -42,7 +42,9 @@
         "prompt-caching",
         "agents",
         "statusline",
-        "obsidian"
+        "obsidian",
+        "mods",
+        "github"
       ],
       "source": "./plugins/simple"
     }

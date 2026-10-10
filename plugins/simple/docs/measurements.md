@@ -121,4 +121,6 @@ Stated plainly so nobody cites it as evidence:
   The filesystem behaviour was verified (notes already there are moved, and a write to the old path lands in the
   vault); that a live session's memory scan follows the symlink was **not** verified end to end. Check it once, on
   your own repo, before trusting it with anything you care about.
-- **The statusline and the two hooks.** They are ergonomics. No cost claim is made for them.
+- **The status line, the side panes and the two hooks.** They are ergonomics. No cost claim is made for them. The
+  cache hit ratio the status line shows is a whole-session average over the session's own main-loop requests: a view
+  of the session you are in, not a measurement of this plugin.
